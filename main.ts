@@ -1,14 +1,11 @@
-let aJoy: number[] = []
-let iFahrstrecke = 0
-let iMotor = 0
 let iServo = 0
-basic.forever(function () {
-    qwiicjoystick.beimStart(qwiicjoystick.qwiicjoystick_eADDR(qwiicjoystick.eADDR.Joystick_x20))
-    aJoy = qwiicjoystick.readArray(qwiicjoystick.qwiicjoystick_eADDR(qwiicjoystick.eADDR.Joystick_x20), qwiicjoystick.eBereich.B_0_255)
-    radio.setGroup(240)
-    radio.setTransmitPower(7)
-    iFahrstrecke = 0
-})
+let iMotor = 0
+lcd16x2rgb.initLCD(lcd16x2rgb.lcd16x2_eADDR(lcd16x2rgb.eADDR_LCD.LCD_16x2_x3E))
+qwiicjoystick.beimStart(qwiicjoystick.qwiicjoystick_eADDR(qwiicjoystick.eADDR.Joystick_x20))
+let aJoy = qwiicjoystick.readArray(qwiicjoystick.qwiicjoystick_eADDR(qwiicjoystick.eADDR.Joystick_x20), qwiicjoystick.eBereich.B_0_255)
+radio.setGroup(240)
+radio.setTransmitPower(7)
+let iFahrstrecke = 0
 loops.everyInterval(400, function () {
     if (iFahrstrecke == 0) {
         basic.setLedColor(0x007fff)
