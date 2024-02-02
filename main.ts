@@ -4,23 +4,23 @@ function fServo (pJoy: number) {
         return 90
     } else if (pJoy < 32) {
         qwiicjoystick.comment("Werte < 32 wie 0 behandeln (max links)")
-        return 45
+        return 135
     } else if (pJoy > 991) {
         qwiicjoystick.comment("Werte > 991 wie 1023 behandeln (max rechts)")
-        return 135
+        return 45
     } else {
         qwiicjoystick.comment("Werte von 32 bis 991 auf 46° bis 134° verteilen")
-        return Math.round(Math.map(pJoy, 32, 991, 46, 134))
+        return Math.round(Math.map(pJoy, 32, 991, 134, 46))
     }
 }
 function fServoDisplay (pJoy: number) {
-    lcd16x2rgb.writeText(lcd16x2rgb.lcd16x2_eADDR(lcd16x2rgb.eADDR_LCD.LCD_16x2_x3E), 0, 0, 3, pJoy)
+    lcd16x2rgb.writeText(lcd16x2rgb.lcd16x2_eADDR(lcd16x2rgb.eADDR_LCD.LCD_16x2_x3E), 0, 0, 3, pJoy, lcd16x2rgb.eAlign.right)
     if (pJoy > 0 && pJoy < xmin) {
         xmin = pJoy
-        lcd16x2rgb.writeText(lcd16x2rgb.lcd16x2_eADDR(lcd16x2rgb.eADDR_LCD.LCD_16x2_x3E), 0, 4, 7, xmin)
+        lcd16x2rgb.writeText(lcd16x2rgb.lcd16x2_eADDR(lcd16x2rgb.eADDR_LCD.LCD_16x2_x3E), 0, 4, 7, xmin, lcd16x2rgb.eAlign.right)
     } else if (pJoy < 1023 && pJoy > xmax) {
         xmax = pJoy
-        lcd16x2rgb.writeText(lcd16x2rgb.lcd16x2_eADDR(lcd16x2rgb.eADDR_LCD.LCD_16x2_x3E), 0, 9, 12, xmax)
+        lcd16x2rgb.writeText(lcd16x2rgb.lcd16x2_eADDR(lcd16x2rgb.eADDR_LCD.LCD_16x2_x3E), 0, 9, 12, xmax, lcd16x2rgb.eAlign.right)
     }
 }
 let iServo = 0
@@ -32,6 +32,8 @@ qwiicjoystick.beimStart(qwiicjoystick.qwiicjoystick_eADDR(qwiicjoystick.eADDR.Jo
 let aJoy = qwiicjoystick.readArray(qwiicjoystick.qwiicjoystick_eADDR(qwiicjoystick.eADDR.Joystick_x20), qwiicjoystick.eBereich.A_0_1023)
 radio.setGroup(240)
 radio.setTransmitPower(7)
+xmin = 512
+xmax = 512
 loops.everyInterval(400, function () {
     let iFahrstrecke = 0
     if (iFahrstrecke == 0) {
@@ -41,7 +43,8 @@ loops.everyInterval(400, function () {
         qwiicjoystick.comment("0 Motor 0..128..255")
         fServoDisplay(aJoy[1])
         iServo = fServo(aJoy[1])
-        qwiicjoystick.comment("1 Servo 0..128..255 -> 45..90..135")
+        lcd16x2rgb.writeText(lcd16x2rgb.lcd16x2_eADDR(lcd16x2rgb.eADDR_LCD.LCD_16x2_x3E), 1, 0, 3, iServo, lcd16x2rgb.eAlign.right)
+        qwiicjoystick.comment("1 Servo 0..512..1023 -> 45..90..135")
         qwiicjoystick.setSendeZahl(NumberFormat.Int8LE, qwiicjoystick.eOffset.z0, iMotor)
         qwiicjoystick.setSendeZahl(NumberFormat.Int8LE, qwiicjoystick.eOffset.z1, iServo)
         qwiicjoystick.setSendeZahl(NumberFormat.Int8LE, qwiicjoystick.eOffset.z2, 0)
