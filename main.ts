@@ -13,8 +13,20 @@ function fServo (pJoy: number) {
         return Math.round(Math.map(pJoy, 32, 991, 46, 134))
     }
 }
+function fServoDisplay (pJoy: number) {
+    lcd16x2rgb.writeText(lcd16x2rgb.lcd16x2_eADDR(lcd16x2rgb.eADDR_LCD.LCD_16x2_x3E), 0, 0, 3, pJoy)
+    if (pJoy > 0 && pJoy < xmin) {
+        xmin = pJoy
+        lcd16x2rgb.writeText(lcd16x2rgb.lcd16x2_eADDR(lcd16x2rgb.eADDR_LCD.LCD_16x2_x3E), 0, 4, 7, xmin)
+    } else if (pJoy < 1023 && pJoy > xmax) {
+        xmax = pJoy
+        lcd16x2rgb.writeText(lcd16x2rgb.lcd16x2_eADDR(lcd16x2rgb.eADDR_LCD.LCD_16x2_x3E), 0, 9, 12, xmax)
+    }
+}
 let iServo = 0
 let iMotor = 0
+let xmax = 0
+let xmin = 0
 lcd16x2rgb.initLCD(lcd16x2rgb.lcd16x2_eADDR(lcd16x2rgb.eADDR_LCD.LCD_16x2_x3E))
 qwiicjoystick.beimStart(qwiicjoystick.qwiicjoystick_eADDR(qwiicjoystick.eADDR.Joystick_x20))
 let aJoy = qwiicjoystick.readArray(qwiicjoystick.qwiicjoystick_eADDR(qwiicjoystick.eADDR.Joystick_x20), qwiicjoystick.eBereich.A_0_1023)
@@ -27,6 +39,7 @@ loops.everyInterval(400, function () {
         aJoy = qwiicjoystick.readArray(qwiicjoystick.qwiicjoystick_eADDR(qwiicjoystick.eADDR.Joystick_x20), qwiicjoystick.eBereich.A_0_1023)
         iMotor = Math.trunc(aJoy[0] / 4)
         qwiicjoystick.comment("0 Motor 0..128..255")
+        fServoDisplay(aJoy[1])
         iServo = fServo(aJoy[1])
         qwiicjoystick.comment("1 Servo 0..128..255 -> 45..90..135")
         qwiicjoystick.setSendeZahl(NumberFormat.Int8LE, qwiicjoystick.eOffset.z0, iMotor)
