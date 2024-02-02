@@ -1,3 +1,18 @@
+function fServo (pJoy: number) {
+    if (lcd16x2rgb.between(pJoy, 496, 512)) {
+        qwiicjoystick.comment("Ruhestellung soll 512 ist 498 auf 512 = 90° anpassen")
+        return 90
+    } else if (pJoy < 32) {
+        qwiicjoystick.comment("Werte < 32 wie 0 behandeln (max links)")
+        return 45
+    } else if (pJoy > 991) {
+        qwiicjoystick.comment("Werte > 991 wie 1023 behandeln (max rechts)")
+        return 135
+    } else {
+        qwiicjoystick.comment("Werte von 32 bis 991 auf 46° bis 134° verteilen")
+        return Math.round(Math.map(pJoy, 32, 991, 46, 134))
+    }
+}
 let iServo = 0
 let iMotor = 0
 lcd16x2rgb.initLCD(lcd16x2rgb.lcd16x2_eADDR(lcd16x2rgb.eADDR_LCD.LCD_16x2_x3E))
